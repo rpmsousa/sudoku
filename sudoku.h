@@ -21,53 +21,39 @@
 #define M_TYPE_SQUARE		4
 
 
-/* list of possible positions for a given digit */
-
-struct pos_digit {
-	unsigned char pos[MAX_POS];
-
-	int row_n[MAX_ROWS];
-	int column_n[MAX_COLUMNS];
-	int square_n[MAX_SQUARES];
-
-	int row[MAX_ROWS];
-	int column[MAX_COLUMNS];
-	int square[MAX_SQUARES];
+struct candidate_count {
+	unsigned char count[MAX_DIGITS];
 };
 
 /* list of possible candidates for a given position */
-
 struct candidate_list {
-	unsigned short list;	/* Bitmask of possible candidates */
+	unsigned char ref[MAX_DIGITS];
 	unsigned int n;		/* Total number of possible candidates */
 };
 
 struct move {
-	int x;
-	int y;
-	int val;	/* current value */
-	int tried;	/* Bitmask of already tried values */
-	int type;	/* Type of current move */
-
-	int row_pos;
-	int column_pos;
-	int square_pos;
-	int xy_candidate;
+	int i;
+	int j;
 };
 
 struct board {
 	unsigned char value[MAX_POS];
 
-	/* for each position track which digits are still possible */
+	/* for each position track which values are still possible */
 	struct candidate_list candidates[MAX_POS];
 
-	/* for each digit track possible positions in each column */
-	struct pos_digit plist[MAX_DIGITS];
+	/* for each value track possible positions in each column, row, square */
+	struct candidate_count row_candidates[MAX_ROWS];
+	struct candidate_count column_candidates[MAX_COLUMNS];
+	struct candidate_count square_candidates[MAX_SQUARES];
+
 
 	struct move move_list[MAX_MOVES];
-	struct move *cur_move;
+	unsigned int move_n;
 
-	unsigned int empty;
+	unsigned int empty;	/* remaining empty positions */
+	unsigned int steps;	/* steps taken to solve */
+	unsigned int solutions;	/* number of possible solution */
 };
 
 #endif /*  _SUDOKU_H_ */
